@@ -77,7 +77,7 @@ def create_annotations(validation_split):
                     image = cv2.imread(frame)
                     h, w, c = image.shape
                 except:
-                    print 'ERROR:', filename, frame
+                    print ('ERROR:', filename, frame)
                     continue
 
                 if folder in anns_dict:

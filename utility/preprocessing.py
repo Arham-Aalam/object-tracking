@@ -331,7 +331,7 @@ class BatchSequenceGenerator1(BatchGenerator):
 
         self.seed  = 1
         images_seq = create_sequences_from_parsed_annotations(images, config['SEQUENCE_LENGTH'])
-        print "Samples/Sequences", len(images), len(images_seq)
+        print ("Samples/Sequences", len(images), len(images_seq))
         super(BatchSequenceGenerator1, self).__init__(  images_seq,
                                                        config,
                                                        shuffle=shuffle,
@@ -385,7 +385,7 @@ class BatchSequenceGenerator2(BaseBatchGenerator):
 
         self.seed  = 1
         images_seq = create_sequences_from_parsed_annotations(images, config['SEQUENCE_LENGTH'])
-        print "Sample Sequences", len(images_seq)
+        print ("Sample Sequences", len(images_seq))
         super(BatchSequenceGenerator2, self).__init__( images_seq,
                                                        config,
                                                        shuffle=shuffle,
@@ -420,9 +420,9 @@ class BatchSequenceGenerator2(BaseBatchGenerator):
 
         # single object in groundtruth and from detection net
         if len(objs) != 1:
-            if self.debug: print "[WARN] Multiple Objects in GT.........Choosing First One Only", idx
+            if self.debug: print ("[WARN] Multiple Objects in GT.........Choosing First One Only", idx)
         if len(obj_det) != 1:
-            if self.debug: print "[WARN] Multiple Objects in Detector...Choosing The One with highest prob and label match with GT", idx
+            if self.debug: print ("[WARN] Multiple Objects in Detector...Choosing The One with highest prob and label match with GT", idx)
             obj_det = [o for o in obj_det if o[0] == objs[0]['name'].lower()]
 
         # Center corodinates and width height

@@ -57,14 +57,14 @@ class FasterRCNN:
             cfg.GPU_ID = self.gpu_id
 
         self.net = caffe.Net(self.prototxt, self.caffemodel, caffe.TEST)
-        print '\n\nLoaded network', self.caffemodel
+        print ('\n\nLoaded network', self.caffemodel)
 
     def extract_spatio_info(self, frame_path, layer='fc7'):
         im = cv2.imread(frame_path)
         scores, boxes = im_detect(self.net, im)
 
         vis_feat = self.net.blobs[layer].data[0]
-        print vis_feat
+        print (vis_feat)
 
         obj_detections = []
         for cls_ind, cls in enumerate(self.CLASSES[1:]):
@@ -76,6 +76,6 @@ class FasterRCNN:
             keep = nms(dets, self.NMS_THRESH)
             dets = dets[keep, :]
             obj_detections += dets
-            print dets
+            print (dets)
 
         return obj_detections, vis_feat

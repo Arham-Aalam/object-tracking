@@ -242,7 +242,7 @@ class MultiObjDetTracker:
         }
 
         train_batch, valid_batch = self.load_data_generators(generator_config)
-        print "Length of Generators", len(train_batch), len(valid_batch)
+        print ("Length of Generators", len(train_batch), len(valid_batch))
 
         early_stop = EarlyStopping(monitor   = 'val_loss',
                                    min_delta = 0.001,
@@ -310,6 +310,6 @@ class MultiObjDetTracker:
             boxes  = decode_netout(netout, self.OBJ_THRESHOLD, self.NMS_THRESHOLD, self.ANCHORS, len(self.LABELS))
             image = draw_boxes(image, boxes, self.LABELS)
 
-            print len(boxes), 'Bounding Boxes Found'
-            print "File Saved to", output_paths[i]
+            print (len(boxes), 'Bounding Boxes Found')
+            print ("File Saved to", output_paths[i])
             cv2.imwrite(output_paths[i], image)
