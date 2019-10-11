@@ -7,7 +7,87 @@ import imgaug as ia
 from imgaug import augmenters as iaa
 from keras.utils import Sequence
 import xml.etree.ElementTree as ET
-from utils import BoundBox, normalize, bbox_iou, generate_heatmap_feat
+from utility.utils import BoundBox, normalize, bbox_iou, generate_heatmap_feat
+
+import pandas as pd
+
+def parse_mot_annotation(ann_dir, img_dir, labels=[]):
+    anns        = []
+    all_imgs    = []
+    seen_labels = {}
+    print('->', os.listdir(ann_dir))
+    for dir in os.listdir(ann_dir):
+        ann_file = os.path.join(ann_dir, dir, 'gt', 'gt.txt')
+        frame_cnt = 1
+        img = {}
+        for img_file in sorted(os.listdir(os.path.join(ann_dir, dir, 'img1'))):
+            img[frame_cnt] = {'object':[]}
+            img[frame_cnt]['folder'] = os.path.join(ann_dir, dir, 'img1')
+            img[frame_cnt]['filename'] = os.path.join(ann_dir, dir, 'img1', img_file)
+            im = cv2.imread(os.path.join(ann_dir, dir, 'img1', img_file))
+            h, w, d = im.shape
+            img[frame_cnt]['width'] = w
+            img[frame_cnt]['height'] = h
+            del im
+            frame_cnt += 1
+        f = open(ann_file, 'r')
+        for line in f.readlines():
+            row, id, xmin, ymin, xmax, ymax, _, _, _ = line.split(',')
+            if str(id) in seen_labels:
+                seen_labels[str(id)] += 1
+            else:
+                seen_labels[str(id)] = 1
+            img[int(row)]['object'] += [{'name': str(id), 'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax}]
+        all_imgs += list(img.values())
+        del img
+    return all_imgs, seen_labels
+
+def parse_spyder_annotation(data_dir, labels=[]):
+    all_imgs    = []
+    seen_labels = {}
+    for dir in sorted(os.listdir(data_dir)):
+        ann_dir, img_dir = sorted(os.listdir(os.path.join(data_dir, dir)))
+        # for getting first CSV file
+        ann_file = sorted(os.listdir(os.path.join(data_dir, dir, ann_dir)))[0]
+        ann_file = os.path.join(data_dir, dir, ann_dir, ann_file)
+
+        ann_data = pd.read_csv(ann_file, header=None)
+        #print(ann_data.columns)
+        ann_data.sort_values(0)
+        frame_count = 1
+
+        print(os.path.join(data_dir, dir, ann_dir, ann_file))
+        img = {'object': []}
+        for img_file in sorted(os.listdir(os.path.join(data_dir, dir, img_dir))):
+            img['folder'] = os.path.join(data_dir, dir, img_dir)
+            img['filename'] = os.path.join(data_dir, dir, img_dir, img_file)
+            im = cv2.imread(os.path.join(data_dir, dir, img_dir, img_file))
+            h, w, d = im.shape
+            del im
+            img['width'] = w
+            img['height'] = h
+            obj = {}
+            for ind in ann_data.index:
+                print(ann_data[0][ind], ann_data[frame_count][ind])
+                if isinstance(ann_data[frame_count][ind], float):
+                    continue
+                obj['name'] = str(ann_data[0][ind])
+                coord = ann_data[frame_count][ind][1:-1].split(',')
+                coord = [float(i.strip()) for i in coord]
+                obj['xmin'] = coord[0]
+                obj['ymin'] = coord[1]
+                obj['xmax'] = coord[2]
+                obj['ymax'] = coord[3]
+                if obj['name'] in seen_labels:
+                    seen_labels[obj['name']] += 1
+                else:
+                    seen_labels[obj['name']] = 1
+            img['object'] += [obj]
+            frame_count += 1
+        all_imgs.append(img)
+        break
+    return all_imgs, seen_labels
+
 
 def parse_annotation(ann_dir, img_dir, labels=[]):
     anns        = []

@@ -80,7 +80,7 @@ class MultiObjDetTracker:
                     ]
 
     LABELS           = LABELS_MOT17
-    IMAGE_H, IMAGE_W = 416, 416 # 416
+    IMAGE_H, IMAGE_W = 416, 416 # 416 Dimention issue
     GRID_H,  GRID_W  = 13 , 13  # 13
     BOX              = 5
     CLASS            = len(LABELS)
@@ -101,7 +101,8 @@ class MultiObjDetTracker:
     SEQUENCE_LENGTH   = 4
     MAX_BOX_PER_IMAGE = 50
 
-    LOAD_MODEL        = True
+    #LOAD_MODEL        = True
+    LOAD_MODEL        = False
     INITIAL_EPOCH     = 0
     SAVED_MODEL_PATH  = 'models/MultiObjDetTracker-CHKPNT-03-0.55.hdf5'
 
@@ -110,10 +111,15 @@ class MultiObjDetTracker:
     # valid_image_folder = 'data/ImageNet-ObjectDetection/ILSVRC2015Train/Data/VID/val/'
     # valid_annot_folder = 'data/ImageNet-ObjectDetection/ILSVRC2015Train/Annotations/VID/val/'
 
-    train_image_folder = 'data/MOT17/MOT17Det/train/'
-    train_annot_folder = 'data/MOT17Ann/train/'
-    valid_image_folder = 'data/MOT17/MOT17Det/train/'
-    valid_annot_folder = 'data/MOT17Ann/val/'
+    # train_image_folder = 'data/MOT17/MOT17Det/train/'
+    # train_annot_folder = 'data/MOT17Ann/train/'
+    # valid_image_folder = 'data/MOT17/MOT17Det/train/'
+    # valid_annot_folder = 'data/MOT17Ann/val/'
+
+    train_image_folder = 'train/'
+    train_annot_folder = 'train/'
+    valid_image_folder = 'test/'
+    valid_annot_folder = 'test/'
 
     model          = None
     detector       = None
@@ -185,6 +191,11 @@ class MultiObjDetTracker:
         self.true_boxes = Input(batch_shape=(self.BATCH_SIZE, self.SEQUENCE_LENGTH, 1, 1, 1, self.TRUE_BOX_BUFFER , 4), name='bbox_input')
         output_trk = Lambda(lambda args: args[0], name='tracking')([z_out, self.true_boxes])
 
+        print('---------------------------------')
+        print(z_out[0])
+        print(self.true_boxes)
+        print('---------------------------------')
+
         self.model = Model([input_images, self.true_boxes], [output_trk, output_det], name='tracker')
         self.model.summary()
 
@@ -195,11 +206,11 @@ class MultiObjDetTracker:
         pickle_train = 'data/MultiObjDetTracker_MOT17_TrainAnn.pickle'
         pickle_val   = 'data/MultiObjDetTracker_MOT17_ValAnn.pickle'
 
-        if os.path.isfile(pickle_train):
+        if os.path.exists(pickle_train):
             with open (pickle_train, 'rb') as fp:
                train_imgs = pickle.load(fp)
         else:
-            train_imgs, seen_train_labels = parse_annotation(self.train_annot_folder, self.train_image_folder, labels=self.LABELS)
+            train_imgs, seen_train_labels = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, labels=self.LABELS)
             with open(pickle_train, 'wb') as fp:
                pickle.dump(train_imgs, fp)
 
@@ -208,7 +219,7 @@ class MultiObjDetTracker:
             with open (pickle_val, 'rb') as fp:
                valid_imgs = pickle.load(fp)
         else:
-            valid_imgs, seen_valid_labels = parse_annotation(self.valid_annot_folder, self.valid_image_folder, labels=self.LABELS)
+            valid_imgs, seen_valid_labels = parse_mot_annotation(self.valid_annot_folder, self.valid_image_folder, labels=self.LABELS)
             with open(pickle_val, 'wb') as fp:
                pickle.dump(valid_imgs, fp)
 
