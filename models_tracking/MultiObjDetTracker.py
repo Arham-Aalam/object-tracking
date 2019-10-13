@@ -2,7 +2,7 @@ import pickle
 import os, cv2
 import numpy as np
 from models_detection.KerasYOLO import KerasYOLO
-from utility.preprocessing import parse_annotation, BatchSequenceGenerator1
+from utility.preprocessing import parse_annotation, parse_mot_annotation, BatchSequenceGenerator1
 from utility.utils import WeightReader, decode_netout, draw_boxes, normalize
 
 import tensorflow as tf
