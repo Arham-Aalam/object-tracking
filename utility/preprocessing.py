@@ -37,7 +37,7 @@ def parse_mot_annotation(ann_dir, img_dir, labels=[]):
                 seen_labels[str(id)] += 1
             else:
                 seen_labels[str(id)] = 1
-            img[int(row)]['object'] += [{'name': str(id), 'xmin': xmin, 'ymin': ymin, 'xmax': xmax, 'ymax': ymax}]
+            img[int(row)]['object'] += [{'name': str(id), 'xmin': int(xmin), 'ymin': int(ymin), 'xmax': int(xmax), 'ymax': int(ymax)}]
         all_imgs += list(img.values())
         del img
     return all_imgs, seen_labels
@@ -251,13 +251,13 @@ class BaseBatchGenerator(Sequence):
         # fix object's position and size
         for obj in all_objs:
             for attr in ['xmin', 'xmax']:
-                if augment: obj[attr] = int(obj[attr] * scale - offx)
+                if augment: obj[attr] = int(obj[attr] * int(scale) - offx)
                 if resize:
                     obj[attr] = int(obj[attr] * float(self.config['IMAGE_W']) / w)
                     obj[attr] = max(min(obj[attr], self.config['IMAGE_W']), 0)
 
             for attr in ['ymin', 'ymax']:
-                if augment: obj[attr] = int(obj[attr] * scale - offy)
+                if augment: obj[attr] = int(obj[attr] * int(scale) - offy)
                 if resize:
                     obj[attr] = int(obj[attr] * float(self.config['IMAGE_H']) / h)
                     obj[attr] = max(min(obj[attr], self.config['IMAGE_H']), 0)
