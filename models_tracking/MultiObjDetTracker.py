@@ -210,7 +210,7 @@ class MultiObjDetTracker:
             with open (pickle_train, 'rb') as fp:
                train_imgs = pickle.load(fp)
         else:
-            train_imgs, seen_train_labels = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, labels=self.LABELS)
+            train_imgs, seen_train_labels = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, 't', labels=self.LABELS)
             with open(pickle_train, 'wb') as fp:
                pickle.dump(train_imgs, fp)
 
@@ -218,11 +218,10 @@ class MultiObjDetTracker:
             with open (pickle_val, 'rb') as fp:
                valid_imgs = pickle.load(fp)
         else:
-            valid_imgs = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, labels=self.LABELS)[(70*len(train_imgs))//100:]
+            valid_imgs = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, 'v', labels=self.LABELS)
             #valid_imgs, seen_valid_labels = parse_mot_annotation(self.valid_annot_folder, self.valid_image_folder, labels=self.LABELS)
             with open(pickle_val, 'wb') as fp:
                pickle.dump(valid_imgs, fp)
-        del train_imgs[(70*len(train_imgs))//100:]
 
         print('Train Data: ', len(train_imgs))
         print('Test Data: ', len(valid_imgs))

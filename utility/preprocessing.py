@@ -11,12 +11,15 @@ from utility.utils import BoundBox, normalize, bbox_iou, generate_heatmap_feat
 
 import pandas as pd
 
-def parse_mot_annotation(ann_dir, img_dir, labels=[]):
+def parse_mot_annotation(ann_dir, img_dir, dataset_type, labels=[]):
     anns        = []
     all_imgs    = []
     seen_labels = {}
-    print('->', os.listdir(ann_dir))
-    for dir in os.listdir(ann_dir):
+    if dataset_type == 't':
+        annn_dir = os.listdir(ann_dir)[:5]
+    else:
+        annn_dir = os.listdir(ann_dir)[5:]
+    for dir in annn_dir:
         ann_file = os.path.join(ann_dir, dir, 'gt', 'gt.txt')
         frame_cnt = 1
         img = {}
