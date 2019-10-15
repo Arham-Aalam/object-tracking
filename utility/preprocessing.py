@@ -58,7 +58,10 @@ def parse_spyder_annotation(data_dir, labels=[]):
 
         print(os.path.join(data_dir, dir, ann_dir, ann_file))
         img = {'object': []}
-        for img_file in sorted(os.listdir(os.path.join(data_dir, dir, img_dir))):
+        last_name = [(int(f.split('_')[0].split('e')[-1].split('.')[0]), int(f.split('_')[-1].split('.')[0])) for f in os.listdir(os.path.join(data_dir, dir, img_dir))]
+        for ln, ln2 in sorted(last_name):
+            img_file = 'rightledge0' + str(ln) + '_' + str(ln2) + '.jpg'
+            print('reading ', img_file)
             img['folder'] = os.path.join(data_dir, dir, img_dir)
             img['filename'] = os.path.join(data_dir, dir, img_dir, img_file)
             im = cv2.imread(os.path.join(data_dir, dir, img_dir, img_file))

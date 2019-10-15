@@ -224,6 +224,9 @@ class MultiObjDetTracker:
                pickle.dump(valid_imgs, fp)
         del train_imgs[(70*len(train_imgs))//100:]
 
+        print('Train Data: ', len(train_imgs))
+        print('Test Data: ', len(valid_imgs))
+
         train_batch = BatchSequenceGenerator1(train_imgs, generator_config, norm=normalize, shuffle=True, augment=True)
         valid_batch = BatchSequenceGenerator1(valid_imgs, generator_config, norm=normalize, augment=False)
 
