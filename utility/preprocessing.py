@@ -15,6 +15,7 @@ def parse_mot_annotation(ann_dir, img_dir, dataset_type, labels=[]):
     anns        = []
     all_imgs    = []
     seen_labels = {}
+    annn_dir = None
     if dataset_type == 't':
         annn_dir = os.listdir(ann_dir)[:5]
     else:
