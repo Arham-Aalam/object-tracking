@@ -425,6 +425,7 @@ class BatchSequenceGenerator1(BatchGenerator):
                                                        augment=augment,
                                                        norm=norm)
 
+
     def __len__(self):
         return super(BatchSequenceGenerator1, self).__len__()
 
