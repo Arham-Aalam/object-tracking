@@ -199,7 +199,6 @@ class MultiObjDetTracker:
         self.model = Model([input_images, self.true_boxes], [output_trk, output_det], name='tracker')
         self.model.summary()
 
-
     def load_data_generators(self, generator_config):
         # pickle_train = 'data/MultiObjDetTracker_TrainAnn.pickle'
         # pickle_val   = 'data/MultiObjDetTracker_ValAnn.pickle'
@@ -218,7 +217,7 @@ class MultiObjDetTracker:
             with open (pickle_val, 'rb') as fp:
                valid_imgs = pickle.load(fp)
         else:
-            valid_imgs = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, 'v')
+            valid_imgs, seen_test_labels = parse_mot_annotation(self.train_annot_folder, self.train_image_folder, 'v')
             #valid_imgs, seen_valid_labels = parse_mot_annotation(self.valid_annot_folder, self.valid_image_folder, labels=self.LABELS)
             with open(pickle_val, 'wb') as fp:
                pickle.dump(valid_imgs, fp)
