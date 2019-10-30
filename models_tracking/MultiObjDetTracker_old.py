@@ -104,7 +104,7 @@ class MultiObjDetTracker:
     #LOAD_MODEL        = True
     LOAD_MODEL        = False
     INITIAL_EPOCH     = 0
-    SAVED_MODEL_PATH  = 'models/MultiObjDetTracker-CHKPNT-06-1.45.hdf5'
+    SAVED_MODEL_PATH  = 'models/MultiObjDetTracker-CHKPNT-03-0.55.hdf5'
 
     # train_image_folder = 'data/ImageNet-ObjectDetection/ILSVRC2015Train/Data/VID/train/'
     # train_annot_folder = 'data/ImageNet-ObjectDetection/ILSVRC2015Train/Annotations/VID/train/'
@@ -308,15 +308,14 @@ class MultiObjDetTracker:
         assert len(input_paths)==self.SEQUENCE_LENGTH
 
         x = np.zeros((1, self.SEQUENCE_LENGTH, self.IMAGE_H, self.IMAGE_W, 3))
-        b = np.zeros((1, self.SEQUENCE_LENGTH, 1, 1, 1, self.MAX_BOX_PER_IMAGE, 4))
+        b = np.zeros((1, self.SEQUENCE_LENGTH, 1, 1, 1, 1, self.MAX_BOX_PER_IMAGE, 4))
         for i,input_path in enumerate(input_paths):
-            image = cv2.imread(input_path)
+            image = cv2.imread(image_path)
             resized_image = cv2.resize(image, (self.IMAGE_H, self.IMAGE_W))
             resized_image = normalize(resized_image)
             x[0,i] = resized_image.reshape((1, self.IMAGE_H, self.IMAGE_W, 3))
             b[0,i] = np.zeros((1, 1, 1, 1, self.MAX_BOX_PER_IMAGE, 4))
 
-        print(x.shape, b.shape)
         netouts = self.model.predict([x, b])[0]
 
         for i,netout in enumerate(netouts):
